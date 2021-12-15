@@ -1,23 +1,29 @@
 const yargs = require("yargs");
 const connection = require("./db/connection");
-const { addBook, findBook, deleteBook } = require("./book")
+const { addBook, findBook, updateBook, deleteBook, findAllBooks } = require("./book")
 
 const app = async (args) => {
     try {
         if (args.add) {
             //call connection function and pass add function and bookObject;
-            const bookObject = { title: args.title, author: args.author }
+            const bookObject = { title: args.title, author: args.author, year: null, publisher: null }
             await connection(addBook, bookObject);
         }
         else if (args.find) {
-            //searches for the books by title:
-            const findResult = { title: args.title }
-            await connection(findBook, findResult) 
+            //searches for the books by query:
+            const filteredResult = { title: args.title }
+            await connection(findBook, filteredResult) 
         }
+        else if (args.findAll) {
+            const findResult = {}
+            await connection(findAllBooks, findResult)
+        }
+
         else if (args.update) {
             //updates a book entry:
-            const updateEntry = { title: args.title }
-            await connection(updateBook, updateEntry)
+            const newQuery = { title: args.title }
+            const updateEntry = { title: args.title, author: args.author }
+            await connection(updateBook, newQuery, updateEntry)
         }
         else if (args.delete) {
             //deletes a book entry:
